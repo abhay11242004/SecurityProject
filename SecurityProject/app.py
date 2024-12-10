@@ -1,9 +1,9 @@
 from flask import Flask, render_template, request, redirect, url_for
 import os
-from ciphers import encrypt_caesar, encrypt_xor, decrypt_caesar, \
-    decrypt_xor, encrypt_substitution, decrypt_substitution
+from ciphers import encrypt_caesar, encrypt_xor, decrypt_caesar,custom_encrypt_xor, \
+    decrypt_xor, encrypt_substitution, decrypt_substitution, custom_decrypt_xor
 from flask import send_from_directory
-
+shuffled: [int]= []
 app = Flask(__name__)
 BASE_DIR = os.getcwd()
 UPLOAD_FOLDER = os.path.join(BASE_DIR, 'static', 'uploads')
@@ -14,6 +14,7 @@ DECRYPTED_FOLDER = os.path.join(BASE_DIR, 'static', 'decrypted')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['ENCRYPTED_FOLDER'] = ENCRYPTED_FOLDER
 app.config['DECRYPTED_FOLDER'] = DECRYPTED_FOLDER
+app.config['Global'] = shuffled
 
 # Ensure all folders exist
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
@@ -40,7 +41,7 @@ def upload_encrypt():
 def upload_decrypt():
     file = request.files['file']
     filename = file.filename
-    file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    file_path = os.path.join(app.config['ENCRYPTED_FOLDER'], filename)
     file.save(file_path)
 
     return render_template('index.html', uploaded_decrypt_file=filename)
@@ -59,6 +60,8 @@ def encrypt():
         encrypted_img = encrypt_substitution(file_path, key)
     elif cipher == "xor":
         encrypted_img = encrypt_xor(file_path, key)
+    elif cipher == "custom":
+        encrypted_img, app.config["Global"] = custom_encrypt_xor(file_path, key)
 
     encrypted_path = os.path.join(app.config['ENCRYPTED_FOLDER'], filename)
     encrypted_img.save(encrypted_path)
@@ -78,6 +81,9 @@ def decrypt():
         decrypted_img = decrypt_substitution(file_path, key)
     elif cipher == "xor":
         decrypted_img = decrypt_xor(file_path, key)
+    elif cipher == "custom":
+        decrypted_img = custom_decrypt_xor(file_path, key, app.config["Global"])
+
 
     decrypted_path = os.path.join(app.config['DECRYPTED_FOLDER'], filename)
     decrypted_img.save(decrypted_path)
