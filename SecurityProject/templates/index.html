@@ -17,6 +17,12 @@
         <h3>Uploaded File for Encryption: {{ uploaded_encrypt_file }}</h3>
         <form action="/encrypt" method="post">
             <input type="hidden" name="filename" value="{{ uploaded_encrypt_file }}">
+            <label for="cipher">Choose Cipher:</label>
+            <select name="cipher" id="cipher" required>
+                <option value="caesar">Caesar Cipher</option>
+                <option value="vigenere">Vigenere Cipher</option>
+                <option value="xor">XOR Cipher</option>
+            </select><br><br>
             <input type="number" name="key" placeholder="Enter key" required><br><br>
             <button type="submit">Encrypt</button>
         </form>
@@ -38,6 +44,12 @@
         <h3>Uploaded File for Decryption: {{ uploaded_decrypt_file }}</h3>
         <form action="/decrypt" method="post">
             <input type="hidden" name="filename" value="{{ uploaded_decrypt_file }}">
+             <label for="cipher">Choose Cipher:</label>
+            <select name="cipher" id="cipher" required>
+                <option value="caesar">Caesar Cipher</option>
+                <option value="vigenere">Vigenere Cipher</option>
+                <option value="xor">XOR Cipher</option>
+            </select><br><br>
             <input type="number" name="key" placeholder="Enter key" required><br><br>
             <button type="submit">Decrypt</button>
         </form>

@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for
 import os
-from ciphers import encrypt_image, decrypt_image
+from ciphers import encrypt_caesar, encrypt_vigenere, encrypt_xor, decrypt_caesar, \
+    decrypt_vigenere, decrypt_xor
 from flask import send_from_directory
 
 app = Flask(__name__)
@@ -48,9 +49,17 @@ def upload_decrypt():
 @app.route('/encrypt', methods=['POST'])
 def encrypt():
     key = int(request.form['key'])
+    cipher = request.form['cipher']
     filename = request.form['filename']
     file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-    encrypted_img = encrypt_image(file_path, key)
+
+    if cipher == "caesar":
+        encrypted_img = encrypt_caesar(file_path, key)
+    elif cipher == "vigenere":
+        encrypted_img = encrypt_vigenere(file_path, key)
+    elif cipher == "xor":
+        encrypted_img = encrypt_xor(file_path, key)
+
     encrypted_path = os.path.join(app.config['ENCRYPTED_FOLDER'], filename)
     encrypted_img.save(encrypted_path)
     return render_template('index.html', encrypted_file=filename)
@@ -59,9 +68,17 @@ def encrypt():
 @app.route('/decrypt', methods=['POST'])
 def decrypt():
     key = int(request.form['key'])
+    cipher = request.form['cipher']
     filename = request.form['filename']
     file_path = os.path.join(app.config['ENCRYPTED_FOLDER'], filename)
-    decrypted_img = decrypt_image(file_path, key)
+
+    if cipher == "caesar":
+        decrypted_img = decrypt_caesar(file_path, key)
+    elif cipher == "vigenere":
+        decrypted_img = decrypt_vigenere(file_path, key)
+    elif cipher == "xor":
+        decrypted_img = decrypt_xor(file_path, key)
+
     decrypted_path = os.path.join(app.config['DECRYPTED_FOLDER'], filename)
     decrypted_img.save(decrypted_path)
     return render_template('index.html', decrypted_file=filename)

@@ -1,8 +1,7 @@
 from PIL import Image
-import random
 
-def encrypt_image(image_path, key):
-    """Encrypts an image by modifying pixel values."""
+
+def encrypt_caesar(image_path, key):
     img = Image.open(image_path)
     pixels = list(img.getdata())
     encrypted_pixels = [((p[0] + key) % 256, (p[1] + key) % 256, (p[2] + key) % 256) for p in pixels]
@@ -10,8 +9,8 @@ def encrypt_image(image_path, key):
     encrypted_img.putdata(encrypted_pixels)
     return encrypted_img
 
-def decrypt_image(image_path, key):
-    """Decrypts an image by reversing the encryption."""
+
+def decrypt_caesar(image_path, key):
     img = Image.open(image_path)
     pixels = list(img.getdata())
     decrypted_pixels = [((p[0] - key) % 256, (p[1] - key) % 256, (p[2] - key) % 256) for p in pixels]
@@ -20,25 +19,67 @@ def decrypt_image(image_path, key):
     return decrypted_img
 
 
-
-
-
-
-
-
-def caesar_cipher_encrypt(img, key):
-    """Encrypt image using Caesar Cipher."""
+def encrypt_vigenere(image_path, keyword):
+    img = Image.open(image_path)
     pixels = list(img.getdata())
-    encrypted_pixels = [((p[0] + key) % 256, (p[1] + key) % 256, (p[2] + key) % 256) for p in pixels]
+    keyword_values = [ord(c) % 256 for c in keyword]
+    encrypted_pixels = [
+        (
+            (p[0] + keyword_values[i % len(keyword_values)]) % 256,
+            (p[1] + keyword_values[i % len(keyword_values)]) % 256,
+            (p[2] + keyword_values[i % len(keyword_values)]) % 256
+        )
+        for i, p in enumerate(pixels)
+    ]
     encrypted_img = Image.new(img.mode, img.size)
     encrypted_img.putdata(encrypted_pixels)
     return encrypted_img
 
 
-def caesar_cipher_decrypt(img, key):
-    """Decrypt image using Caesar Cipher."""
+def decrypt_vigenere(image_path, keyword):
+    img = Image.open(image_path)
     pixels = list(img.getdata())
-    decrypted_pixels = [((p[0] - key) % 256, (p[1] - key) % 256, (p[2] - key) % 256) for p in pixels]
+    keyword_values = [ord(c) % 256 for c in keyword]
+    decrypted_pixels = [
+        (
+            (p[0] - keyword_values[i % len(keyword_values)]) % 256,
+            (p[1] - keyword_values[i % len(keyword_values)]) % 256,
+            (p[2] - keyword_values[i % len(keyword_values)]) % 256
+        )
+        for i, p in enumerate(pixels)
+    ]
+    decrypted_img = Image.new(img.mode, img.size)
+    decrypted_img.putdata(decrypted_pixels)
+    return decrypted_img
+
+
+def encrypt_xor(image_path, key):
+    img = Image.open(image_path)
+    pixels = list(img.getdata())
+    encrypted_pixels = [
+        (
+            p[0] ^ key,
+            p[1] ^ key,
+            p[2] ^ key
+        )
+        for p in pixels
+    ]
+    encrypted_img = Image.new(img.mode, img.size)
+    encrypted_img.putdata(encrypted_pixels)
+    return encrypted_img
+
+
+def decrypt_xor(image_path, key):
+    img = Image.open(image_path)
+    pixels = list(img.getdata())
+    decrypted_pixels = [
+        (
+            p[0] ^ key,
+            p[1] ^ key,
+            p[2] ^ key
+        )
+        for p in pixels
+    ]
     decrypted_img = Image.new(img.mode, img.size)
     decrypted_img.putdata(decrypted_pixels)
     return decrypted_img
