@@ -5,31 +5,47 @@
 </head>
 <body>
     <h1>Image Cryptography</h1>
-    <form action="/upload" method="post" enctype="multipart/form-data">
+
+    <!-- Upload Image Form for Encryption -->
+    <h2>Encrypt Image</h2>
+    <form action="/upload/encrypt" method="post" enctype="multipart/form-data">
         <input type="file" name="file" required>
-        <button type="submit">Upload</button>
+        <button type="submit">Upload for Encryption</button>
     </form>
 
-    {% if uploaded_file %}
-        <h2>Uploaded File: {{ uploaded_file }}</h2>
+    {% if uploaded_encrypt_file %}
+        <h3>Uploaded File for Encryption: {{ uploaded_encrypt_file }}</h3>
         <form action="/encrypt" method="post">
-            <input type="hidden" name="filename" value="{{ uploaded_file }}">
-            <input type="number" name="key" placeholder="Enter key" required>
+            <input type="hidden" name="filename" value="{{ uploaded_encrypt_file }}">
+            <input type="number" name="key" placeholder="Enter key" required><br><br>
             <button type="submit">Encrypt</button>
         </form>
     {% endif %}
 
     {% if encrypted_file %}
-        <h2>Encrypted File: {{ encrypted_file }}</h2>
+        <h3>Encrypted File: {{ encrypted_file }}</h3>
+        <a href="{{ url_for('download_encrypted', filename=encrypted_file) }}" download>Download Encrypted File</a>
+    {% endif %}
+
+    <!-- Upload Image Form for Decryption -->
+    <h2>Decrypt Image</h2>
+    <form action="/upload/decrypt" method="post" enctype="multipart/form-data">
+        <input type="file" name="file" required>
+        <button type="submit">Upload for Decryption</button>
+    </form>
+
+    {% if uploaded_decrypt_file %}
+        <h3>Uploaded File for Decryption: {{ uploaded_decrypt_file }}</h3>
         <form action="/decrypt" method="post">
-            <input type="hidden" name="filename" value="{{ encrypted_file }}">
-            <input type="number" name="key" placeholder="Enter key" required>
+            <input type="hidden" name="filename" value="{{ uploaded_decrypt_file }}">
+            <input type="number" name="key" placeholder="Enter key" required><br><br>
             <button type="submit">Decrypt</button>
         </form>
     {% endif %}
 
     {% if decrypted_file %}
-        <h2>Decrypted File: {{ decrypted_file }}</h2>
+        <h3>Decrypted File: {{ decrypted_file }}</h3>
+        <a href="{{ url_for('download_decrypted', filename=decrypted_file) }}" download>Download Decrypted File</a>
     {% endif %}
 </body>
 </html>
