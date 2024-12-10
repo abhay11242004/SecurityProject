@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for
 import os
-from ciphers import encrypt_caesar, encrypt_vigenere, encrypt_xor, decrypt_caesar, \
-    decrypt_vigenere, decrypt_xor
+from ciphers import encrypt_caesar, encrypt_xor, decrypt_caesar, \
+    decrypt_xor, encrypt_substitution, decrypt_substitution
 from flask import send_from_directory
 
 app = Flask(__name__)
@@ -55,8 +55,8 @@ def encrypt():
 
     if cipher == "caesar":
         encrypted_img = encrypt_caesar(file_path, key)
-    elif cipher == "vigenere":
-        encrypted_img = encrypt_vigenere(file_path, key)
+    elif cipher == "substitution":
+        encrypted_img = encrypt_substitution(file_path, key)
     elif cipher == "xor":
         encrypted_img = encrypt_xor(file_path, key)
 
@@ -74,8 +74,8 @@ def decrypt():
 
     if cipher == "caesar":
         decrypted_img = decrypt_caesar(file_path, key)
-    elif cipher == "vigenere":
-        decrypted_img = decrypt_vigenere(file_path, key)
+    elif cipher == "substitution":
+        decrypted_img = decrypt_substitution(file_path, key)
     elif cipher == "xor":
         decrypted_img = decrypt_xor(file_path, key)
 
@@ -84,14 +84,15 @@ def decrypt():
     return render_template('index.html', decrypted_file=filename)
 
 
-@app.route('/download/encrypted/<filename>')
+@app.route('/static/encrypted/<filename>')
 def download_encrypted(filename):
     return send_from_directory(app.config['ENCRYPTED_FOLDER'], filename, as_attachment=True)
 
 
-@app.route('/download/decrypted/<filename>')
+@app.route('/static/decrypted/<filename>')
 def download_decrypted(filename):
     return send_from_directory(app.config['DECRYPTED_FOLDER'], filename, as_attachment=True)
+
 
 
 if __name__ == '__main__':

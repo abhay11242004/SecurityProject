@@ -1,63 +1,189 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Image Cryptography</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            padding: 20px;
+            background-color: #6200ea;
+            color: white;
+            margin: 0;
+        }
+
+        h2 {
+            color: #6200ea;
+        }
+
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        input[type="file"] {
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid #ccc;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        input[type="number"] {
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid #ccc;
+            border-radius: 4px;
+        }
+
+        select {
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #6200ea;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #3700b3;
+        }
+
+        .file-info {
+            margin-top: 10px;
+        }
+
+        .file-info a {
+            color: #6200ea;
+            text-decoration: none;
+        }
+
+        .file-info a:hover {
+            text-decoration: underline;
+        }
+
+        .upload-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .image-display {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+
+        .image-display img {
+            max-width: 45%;
+            height: auto;
+            border-radius: 8px;
+        }
+    </style>
 </head>
 <body>
     <h1>Image Cryptography</h1>
 
-    <!-- Upload Image Form for Encryption -->
-    <h2>Encrypt Image</h2>
-    <form action="/upload/encrypt" method="post" enctype="multipart/form-data">
-        <input type="file" name="file" required>
-        <button type="submit">Upload for Encryption</button>
-    </form>
-
-    {% if uploaded_encrypt_file %}
-        <h3>Uploaded File for Encryption: {{ uploaded_encrypt_file }}</h3>
-        <form action="/encrypt" method="post">
-            <input type="hidden" name="filename" value="{{ uploaded_encrypt_file }}">
-            <label for="cipher">Choose Cipher:</label>
-            <select name="cipher" id="cipher" required>
-                <option value="caesar">Caesar Cipher</option>
-                <option value="vigenere">Vigenere Cipher</option>
-                <option value="xor">XOR Cipher</option>
-            </select><br><br>
-            <input type="number" name="key" placeholder="Enter key" required><br><br>
-            <button type="submit">Encrypt</button>
+    <div class="container upload-section">
+        <h2 class="section-title">Encrypt Image</h2>
+        <form action="/upload/encrypt" method="post" enctype="multipart/form-data">
+            <input type="file" name="file" required>
+            <button type="submit">Upload for Encryption</button>
         </form>
-    {% endif %}
 
-    {% if encrypted_file %}
-        <h3>Encrypted File: {{ encrypted_file }}</h3>
-        <a href="{{ url_for('download_encrypted', filename=encrypted_file) }}" download>Download Encrypted File</a>
-    {% endif %}
+        {% if uploaded_encrypt_file %}
+            <div class="file-info">
+                <h3>Uploaded File for Encryption: {{ uploaded_encrypt_file }}</h3>
+                <form action="/encrypt" method="post">
+                    <input type="hidden" name="filename" value="{{ uploaded_encrypt_file }}">
+                    <label for="cipher">Choose Cipher:</label>
+                    <select name="cipher" id="cipher" required>
+                        <option value="caesar">Caesar Cipher</option>
+                        <option value="substitution">Substitution Cipher</option>
+                        <option value="xor">XOR Cipher</option>
+                    </select><br><br>
+                    <input type="number" name="key" placeholder="Enter key" required><br><br>
+                    <button type="submit">Encrypt</button>
+                </form>
+            </div>
+        {% endif %}
 
-    <!-- Upload Image Form for Decryption -->
-    <h2>Decrypt Image</h2>
-    <form action="/upload/decrypt" method="post" enctype="multipart/form-data">
-        <input type="file" name="file" required>
-        <button type="submit">Upload for Decryption</button>
-    </form>
+        {% if encrypted_file %}
+            <div class="file-info">
+                <h3>Encrypted File: {{ encrypted_file }}</h3>
+                <a href="{{ url_for('download_encrypted', filename=encrypted_file) }}" download>Download Encrypted File</a>
+                <div class="image-display">
+                    <img src="{{ url_for('download_encrypted', filename=encrypted_file) }}" alt="Encrypted Image">
+                </div>
+            </div>
+        {% endif %}
+    </div>
 
-    {% if uploaded_decrypt_file %}
-        <h3>Uploaded File for Decryption: {{ uploaded_decrypt_file }}</h3>
-        <form action="/decrypt" method="post">
-            <input type="hidden" name="filename" value="{{ uploaded_decrypt_file }}">
-             <label for="cipher">Choose Cipher:</label>
-            <select name="cipher" id="cipher" required>
-                <option value="caesar">Caesar Cipher</option>
-                <option value="vigenere">Vigenere Cipher</option>
-                <option value="xor">XOR Cipher</option>
-            </select><br><br>
-            <input type="number" name="key" placeholder="Enter key" required><br><br>
-            <button type="submit">Decrypt</button>
+    <div class="container upload-section">
+        <h2 class="section-title">Decrypt Image</h2>
+        <form action="/upload/decrypt" method="post" enctype="multipart/form-data">
+            <input type="file" name="file" required>
+            <button type="submit">Upload for Decryption</button>
         </form>
-    {% endif %}
 
-    {% if decrypted_file %}
-        <h3>Decrypted File: {{ decrypted_file }}</h3>
-        <a href="{{ url_for('download_decrypted', filename=decrypted_file) }}" download>Download Decrypted File</a>
-    {% endif %}
+        {% if uploaded_decrypt_file %}
+            <div class="file-info">
+                <h3>Uploaded File for Decryption: {{ uploaded_decrypt_file }}</h3>
+                <form action="/decrypt" method="post">
+                    <input type="hidden" name="filename" value="{{ uploaded_decrypt_file }}">
+                    <label for="cipher">Choose Cipher:</label>
+                    <select name="cipher" id="cipher" required>
+                        <option value="caesar">Caesar Cipher</option>
+                        <option value="substitution">Substitution Cipher</option>
+                        <option value="xor">XOR Cipher</option>
+                    </select><br><br>
+                    <input type="number" name="key" placeholder="Enter key" required><br><br>
+                    <button type="submit">Decrypt</button>
+                </form>
+            </div>
+        {% endif %}
+
+        {% if decrypted_file %}
+            <div class="file-info">
+                <h3>Decrypted File: {{ decrypted_file }}</h3>
+                <a href="{{ url_for('download_decrypted', filename=decrypted_file) }}" download>Download Decrypted File</a>
+                <div class="image-display">
+                    <img src="{{ url_for('download_decrypted', filename=decrypted_file) }}" alt="Decrypted Image">
+                </div>
+            </div>
+        {% endif %}
+    </div>
 </body>
 </html>
